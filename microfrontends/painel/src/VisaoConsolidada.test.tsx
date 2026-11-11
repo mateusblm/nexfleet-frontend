@@ -127,3 +127,29 @@ it("mostra consumo médio, custo por km e gasto por veículo e o resumo da frota
     }),
   );
 });
+
+it("avisa que o cálculo de eficiência falhou e mantém os veículos na tabela", async () => {
+  stubApi(() =>
+    Promise.resolve(
+      respostaJson({
+        ...agregadoCompleto,
+        eficiencia: { veiculos: [], frota: null },
+        fontes: { frota: "ok", operacoes: "ok", funcao: "falhou" },
+      }),
+    ),
+  );
+
+  render(<PainelApp token="token" perfil="GESTOR_FROTA" />);
+
+  const secao = await screen.findByRole("region", { name: "Visão consolidada" });
+  expect(
+    await within(secao).findByText(/Cálculo de eficiência indisponível no momento/),
+  ).toBeInTheDocument();
+
+  const tabela = await tabelaConsolidada();
+  expect(linhaDa(tabela, "ABC1D23")).toBeInTheDocument();
+  expect(linhaDa(tabela, "CDE3F45")).toBeInTheDocument();
+  expect(tabela).not.toHaveTextContent("km/l");
+  expect(within(linhaDa(tabela, "ABC1D23")).getAllByText("indisponível")).toHaveLength(3);
+  expect(screen.getByText("R$ 880,00")).toBeInTheDocument();
+});
