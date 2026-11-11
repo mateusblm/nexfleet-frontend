@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "docs:eventos": "node scripts/copiar-asyncapi.mjs",
+    "prebuild": "node scripts/copiar-asyncapi.mjs",
     "build": "tsc --noEmit && vite build",
+    "postbuild": "node scripts/verificar-docs.mjs",
     "test": "vitest run"
   },
   "dependencies": {

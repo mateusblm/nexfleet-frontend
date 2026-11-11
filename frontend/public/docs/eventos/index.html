@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NexFleet — Eventos (AsyncAPI)</title>
+    <!--
+      Contrato: eventos.asyncapi.yaml (cópia do guarda-chuva nexfleet/contracts, fonte da verdade;
+      atualizada por scripts/copiar-asyncapi.mjs no build). Renderizado pelo web component oficial
+      da AsyncAPI, com versão fixa.
+    -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@asyncapi/web-component@3.1.8/lib/asyncapi-web-component.js"
+      defer
+    ></script>
+    <style>
+      body { margin: 0; background: #fff; font-family: system-ui, sans-serif; }
+      .fallback { padding: 16px; }
+    </style>
+  </head>
+  <body>
+    <asyncapi-component
+      schemaUrl="./eventos.asyncapi.yaml"
+      cssImportPath="https://cdn.jsdelivr.net/npm/@asyncapi/react-component@3.1.8/styles/default.min.css"
+      config='{"show": {"sidebar": true}}'
+    ></asyncapi-component>
+    <noscript>
+      <p class="fallback">
+        Esta página precisa de JavaScript. O contrato está em
+        <a href="./eventos.asyncapi.yaml">eventos.asyncapi.yaml</a>
+        (eventos AbastecimentoRegistrado v1 e ManutencaoRegistrada v1).
+      </p>
+    </noscript>
+  </body>
+</html>
