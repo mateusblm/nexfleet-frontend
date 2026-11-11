@@ -253,3 +253,47 @@ it("mantém a manutenção e avisa quando o Operações está indisponível na e
     .toHaveTextContent("Operações está indisponível no momento. Tente novamente em instantes.");
   expect(screen.getByText("Troca de filtros")).toBeInTheDocument();
 });
+
+it("CQ06 marca o campo inválido na edição de abastecimento com resumo acessível e sem enviar", async () => {
+  const fetch = apiComHistorico();
+  render(<OperacoesApp token="token" perfil="GESTOR_FROTA" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Editar abastecimento de 12/11/2026" }));
+  const formulario = screen.getByRole("form", { name: "Editar abastecimento de 12/11/2026" });
+  fireEvent.change(within(formulario).getByLabelText("Litros"), { target: { value: "" } });
+  fireEvent.change(within(formulario).getByLabelText("Valor total"), { target: { value: "300" } });
+  fireEvent.click(within(formulario).getByRole("button", { name: "Salvar" }));
+
+  const alerta = await within(formulario).findByRole("alert");
+  expect(alerta).toHaveTextContent(
+    "Revise os campos marcados. Preencha os campos obrigatórios e confira os valores informados.");
+  const litros = within(formulario).getByLabelText("Litros");
+  expect(litros).toHaveAttribute("aria-invalid", "true");
+  expect(litros).toHaveAttribute("aria-describedby", alerta.id);
+  expect(formulario).toHaveAttribute("aria-describedby", alerta.id);
+  expect(formulario).toHaveClass("validacao-exibida");
+  expect(within(formulario).getByLabelText("Valor total")).toHaveValue(300);
+  expect(within(formulario).getByLabelText("Valor total")).not.toHaveAttribute("aria-invalid");
+  expect(chamadas(fetch, "PUT")).toHaveLength(0);
+
+  fireEvent.input(litros, { target: { value: "40" } });
+  expect(litros).not.toHaveAttribute("aria-invalid");
+  expect(litros).not.toHaveAttribute("aria-describedby");
+  expect(within(formulario).queryByRole("alert")).not.toBeInTheDocument();
+  expect(formulario).not.toHaveClass("validacao-exibida");
+});
+
+it("CQ06 marca o campo obrigatório vazio na edição de manutenção sem enviar", async () => {
+  const fetch = apiComHistorico();
+  render(<OperacoesApp token="token" perfil="GESTOR_FROTA" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Editar manutenção de 12/11/2026" }));
+  const formulario = screen.getByRole("form", { name: "Editar manutenção de 12/11/2026" });
+  fireEvent.change(within(formulario).getByLabelText("Descrição"), { target: { value: "" } });
+  fireEvent.click(within(formulario).getByRole("button", { name: "Salvar" }));
+
+  const alerta = await within(formulario).findByRole("alert");
+  expect(alerta).toHaveTextContent("Revise os campos marcados");
+  expect(within(formulario).getByLabelText("Descrição")).toHaveAttribute("aria-invalid", "true");
+  expect(within(formulario).getByLabelText("Descrição")).toHaveAttribute("aria-describedby", alerta.id);
+  expect(within(formulario).getByLabelText("Oficina")).toHaveValue("Oficina Central");
+  expect(chamadas(fetch, "PUT")).toHaveLength(0);
+});
