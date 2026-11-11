@@ -172,6 +172,7 @@
 }
 
 /* Edição e exclusão no histórico. */
+.lista-operacoes li { align-content: start; }
 .lista-operacoes li.linha-em-edicao { grid-column: 1 / -1; }
 .mfe-area .acoes-linha { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .mfe-area .acoes-linha button {
