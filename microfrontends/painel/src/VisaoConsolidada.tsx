@@ -67,6 +67,7 @@ export type EstadoConsolidada =
 
 export function VisaoConsolidada({
   estado,
+  onTentarNovamente,
 }: {
   estado: EstadoConsolidada;
   onTentarNovamente: () => void;
@@ -80,8 +81,25 @@ export function VisaoConsolidada({
     dados && dados.fontes.funcao === "falhou" ? "indisponível" : "sem dados suficientes";
 
   return (
-    <section className="painel-secao" aria-labelledby="titulo-consolidada">
+    <section
+      className="painel-secao"
+      aria-labelledby="titulo-consolidada"
+      aria-busy={estado.tipo === "carregando"}
+    >
       <h3 id="titulo-consolidada">Visão consolidada</h3>
+      {estado.tipo === "carregando" && (
+        <p className="painel-carregando" role="status">
+          Carregando visão consolidada…
+        </p>
+      )}
+      {estado.tipo === "erro" && (
+        // role="status" e não "alert": o alerta do Painel fica reservado aos indicadores,
+        // e a falha deste cartão não deve competir com ele.
+        <div className="painel-erro" role="status">
+          <p>Não foi possível carregar a visão consolidada. Os demais indicadores continuam válidos.</p>
+          <button onClick={onTentarNovamente}>Tentar carregar a visão consolidada novamente</button>
+        </div>
+      )}
       {avisos.length > 0 && (
         <ul className="painel-avisos">
           {avisos.map((aviso) => (
@@ -97,7 +115,12 @@ export function VisaoConsolidada({
         </p>
       )}
       {dados && linhas.length > 0 && (
-        <div className="painel-tabela-rolagem">
+        <div
+          className="painel-tabela-rolagem"
+          role="region"
+          aria-label="Tabela da visão consolidada"
+          tabIndex={0}
+        >
           <table className="painel-tabela">
             <caption>Consumo médio, custo por km e gasto total por veículo e da frota</caption>
             <thead>
