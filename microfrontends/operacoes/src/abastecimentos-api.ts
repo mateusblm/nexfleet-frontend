@@ -1,6 +1,8 @@
+import { cabecalhos, mensagemDeFalha } from "./alteracao-api";
 export type Vinculo = { id: string; veiculoId: string; veiculoPlaca: string; motoristaId: string; motoristaNome: string; inicio: string; fim: string | null };
-export type Abastecimento = { id: string; veiculoId: string; motoristaId: string; realizadoEm: string; combustivel: string; litros: number; valorTotal: number; quilometragem: number; criadoEm: string };
-export type NovoAbastecimento = Omit<Abastecimento, "id" | "criadoEm">;
+export type Abastecimento = { id: string; veiculoId: string; motoristaId: string; realizadoEm: string; combustivel: string; litros: number; valorTotal: number; quilometragem: number; criadoEm: string; versao?: number };
+export type NovoAbastecimento = Omit<Abastecimento, "id" | "criadoEm" | "versao">;
+export type AtualizacaoAbastecimento = Pick<Abastecimento, "combustivel" | "litros" | "valorTotal" | "quilometragem">;
 export class ErroAbastecimento extends Error {}
 
 async function resposta<T>(response: Response): Promise<T> {
@@ -37,3 +39,18 @@ export async function registrarAbastecimento(token: string, entrada: NovoAbastec
 }
 import { apiUrl } from "./api-url";
 
+
+export async function atualizarAbastecimento(token: string, id: string, entrada: AtualizacaoAbastecimento) {
+  const response = await fetch(apiUrl(`/api/v1/abastecimentos/${id}`), {
+    method: "PUT", headers: cabecalhos(token), body: JSON.stringify(entrada),
+  });
+  if (!response.ok) throw new ErroAbastecimento(await mensagemDeFalha(response, "Não foi possível salvar o abastecimento."));
+  return response.json() as Promise<Abastecimento>;
+}
+
+export async function excluirAbastecimento(token: string, id: string) {
+  const response = await fetch(apiUrl(`/api/v1/abastecimentos/${id}`), {
+    method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new ErroAbastecimento(await mensagemDeFalha(response, "Não foi possível excluir o abastecimento."));
+}
