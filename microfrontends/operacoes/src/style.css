@@ -170,3 +170,55 @@
   border-color: #d92d20 !important;
   box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.14) !important;
 }
+
+/* Edição e exclusão no histórico. */
+.lista-operacoes li.linha-em-edicao { grid-column: 1 / -1; }
+.mfe-area .acoes-linha { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.mfe-area .acoes-linha button {
+  min-height: 40px;
+  margin: 0;
+  padding: 9px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #fff;
+  color: #46556b;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mfe-area .acoes-linha button:hover:not(:disabled) { background: #f1f5f9; border-color: #94a3b8; }
+.mfe-area .acoes-linha button:focus-visible, .historico-card h3:focus-visible { outline: 3px solid rgb(59 130 246 / 0.4); outline-offset: 2px; }
+.mfe-area .acoes-linha button[type="submit"] { border-color: #2563eb; background: #2563eb; color: #fff; }
+.mfe-area .acoes-linha button[type="submit"]:hover:not(:disabled) { background: #1656c1; border-color: #1656c1; }
+.mfe-area .acoes-linha button.perigo { border-color: #fca5a5; color: #b91c1c; }
+.mfe-area .acoes-linha button.perigo:hover:not(:disabled) { background: #fef2f2; border-color: #dc2626; }
+.mfe-area .confirmacao-exclusao .acoes-linha button.perigo { border-color: #dc2626; background: #dc2626; color: #fff; }
+.mfe-area .confirmacao-exclusao .acoes-linha button.perigo:hover:not(:disabled) { background: #b91c1c; }
+.mfe-area .confirmacao-exclusao {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  background: #fef2f2;
+}
+.mfe-area .confirmacao-exclusao p:first-child { margin: 0; color: #912018; font-size: 0.86rem; font-weight: 600; }
+.mfe-area .formulario-edicao {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.4fr) minmax(160px, 1fr);
+  gap: 11px 16px;
+  max-width: 720px;
+}
+.mfe-area .formulario-edicao h4, .mfe-area .formulario-edicao .acoes-linha,
+.mfe-area .formulario-edicao .campos-fixos { grid-column: 1 / -1; }
+.mfe-area .formulario-edicao h4 { margin: 0; font-size: 0.98rem; }
+.mfe-area .formulario-edicao .acoes-linha button { grid-column: auto; }
+.mfe-area .campos-fixos { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; }
+.mfe-area .campos-fixos dt { color: #46556b; font-size: 0.75rem; font-weight: 700; }
+.mfe-area .campos-fixos dd { margin: 2px 0 0; color: #172033; font-size: 0.86rem; }
+
+@media (max-width: 650px) {
+  .mfe-area .formulario-edicao { grid-template-columns: 1fr; }
+  .mfe-area .acoes-linha button { flex: 1 1 auto; }
+}
