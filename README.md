@@ -1,6 +1,6 @@
 # NexFleet — Frontend (shell + microfrontends)
 
-Interface web do NexFleet, plataforma acadêmica de gestão de frotas (PJBL, PUCPR). Parte da v1.0.0; o sistema completo está no repositório guarda-chuva [nexfleet](https://github.com/mateusblm/nexfleet).
+Interface web do NexFleet, plataforma de gestão de frotas. Parte da v1.0.0; o sistema completo está no repositório guarda-chuva [nexfleet](https://github.com/mateusblm/nexfleet).
 
 ## Arquitetura
 
@@ -81,7 +81,7 @@ Imagens Docker dos serviços: `mateusblm/nexfleet-{gateway,bff,identidade,frota,
 
 > **Partida a frio:** os Container Apps escalam a zero e o Azure SQL pausa sem uso. A primeira chamada após um período de inatividade pode levar de 1 a 2 minutos (ou responder 503/504); tente de novo em seguida.
 
-## Alunos
+## Equipe
 
 - Vinícius dos Reis Góes
 - Mateus Burlamaqui

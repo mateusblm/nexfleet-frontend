@@ -45,7 +45,7 @@ it("lista e filtra veículos pelo Gateway", async () => {
   );
 });
 
-it("cadastra com os campos do PJBL", async () => {
+it("cadastra com os campos obrigatórios do veículo", async () => {
   const fetch = vi
     .fn()
     .mockResolvedValueOnce(json([]))

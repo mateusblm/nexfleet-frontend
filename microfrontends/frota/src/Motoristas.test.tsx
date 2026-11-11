@@ -46,7 +46,7 @@ it("lista, mascara documentos e filtra motoristas", async () => {
   );
 });
 
-it("cadastra com os campos definidos no PJBL", async () => {
+it("cadastra com os campos obrigatórios do motorista", async () => {
   const fetch = vi
     .fn()
     .mockResolvedValueOnce(json([]))

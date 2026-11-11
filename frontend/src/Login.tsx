@@ -198,7 +198,7 @@ export function Login() {
             </button>
           </form>
           <p className="auth-mensagem" role="status" aria-live="polite">{mensagem}</p>
-          <small>Ambiente acadêmico. Ao atualizar a página, será necessário entrar novamente.</small>
+          <small>Ao atualizar a página, será necessário entrar novamente.</small>
         </div>
       </section>
     );
