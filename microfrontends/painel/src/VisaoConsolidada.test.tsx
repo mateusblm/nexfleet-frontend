@@ -171,3 +171,26 @@ it("explica que a frota está vazia em vez de mostrar uma tabela sem linhas", as
   expect(await within(secao).findByText(/Nenhum veículo cadastrado/)).toBeInTheDocument();
   expect(within(secao).queryByRole("table")).not.toBeInTheDocument();
 });
+
+it("mostra erro só no cartão quando a requisição falha e permite tentar de novo", async () => {
+  const agregado = vi
+    .fn<() => Promise<Response>>()
+    .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+    .mockResolvedValueOnce(respostaJson(agregadoCompleto));
+  stubApi(agregado);
+
+  render(<PainelApp token="token" perfil="GESTOR_FROTA" />);
+
+  const secao = await screen.findByRole("region", { name: "Visão consolidada" });
+  expect(
+    await within(secao).findByText(/Não foi possível carregar a visão consolidada/),
+  ).toBeInTheDocument();
+  expect(screen.getByText("R$ 880,00")).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Situação da frota" })).toBeInTheDocument();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+  within(secao).getByRole("button", { name: "Tentar carregar a visão consolidada novamente" }).click();
+
+  expect(await tabelaConsolidada()).toBeInTheDocument();
+  expect(agregado).toHaveBeenCalledTimes(2);
+});
