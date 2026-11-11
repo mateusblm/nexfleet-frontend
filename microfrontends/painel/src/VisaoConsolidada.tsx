@@ -89,7 +89,14 @@ export function VisaoConsolidada({
           ))}
         </ul>
       )}
-      {dados && (
+      {dados && linhas.length === 0 && (
+        <p className="painel-vazio">
+          {dados.fontes.frota === "falhou"
+            ? "Não há veículos para exibir enquanto o cadastro da frota estiver indisponível."
+            : "Nenhum veículo cadastrado na frota ainda. Cadastre veículos no módulo Frota e registre abastecimentos para ver consumo médio e custo por km."}
+        </p>
+      )}
+      {dados && linhas.length > 0 && (
         <div className="painel-tabela-rolagem">
           <table className="painel-tabela">
             <caption>Consumo médio, custo por km e gasto total por veículo e da frota</caption>
