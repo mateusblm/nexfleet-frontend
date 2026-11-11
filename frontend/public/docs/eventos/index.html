@@ -7,12 +7,13 @@
     <!--
       Contrato: eventos.asyncapi.yaml (cópia do guarda-chuva nexfleet/contracts, fonte da verdade;
       atualizada por scripts/copiar-asyncapi.mjs no build). Renderizado pelo web component oficial
-      da AsyncAPI, com versão fixa.
+      da AsyncAPI, com versão fixa (devDependency), servido pelo próprio site em ./vendor/ porque a
+      CSP só libera 'self'. O <base> mantém os caminhos relativos certos também em /docs/eventos
+      (sem barra final), rota reescrita para esta página no Static Web App. O parser embutido
+      valida o contrato com Ajv (new Function), por isso a CSP destas rotas tem 'unsafe-eval'.
     -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@asyncapi/web-component@3.1.8/lib/asyncapi-web-component.js"
-      defer
-    ></script>
+    <base href="/docs/eventos/" />
+    <script src="./vendor/@asyncapi/web-component@3.1.8/lib/asyncapi-web-component.js" defer></script>
     <style>
       body { margin: 0; background: #fff; font-family: system-ui, sans-serif; }
       .fallback { padding: 16px; }
@@ -21,7 +22,7 @@
   <body>
     <asyncapi-component
       schemaUrl="./eventos.asyncapi.yaml"
-      cssImportPath="https://cdn.jsdelivr.net/npm/@asyncapi/react-component@3.1.8/styles/default.min.css"
+      cssImportPath="./vendor/@asyncapi/react-component@3.1.8/styles/default.min.css"
       config='{"show": {"sidebar": true}}'
     ></asyncapi-component>
     <noscript>
