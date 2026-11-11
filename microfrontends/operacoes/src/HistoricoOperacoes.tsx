@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { ErroAbastecimento, atualizarAbastecimento, excluirAbastecimento, type Abastecimento, type Vinculo } from "./abastecimentos-api";
 import { ErroManutencao, atualizarManutencao, excluirManutencao, type Manutencao, type Veiculo } from "./manutencoes-api";
+import { useFormValidation } from "./useFormValidation";
 
 type Modo = "ver" | "editar" | "confirmar";
 
@@ -71,12 +72,16 @@ function ConfirmacaoExclusao({ linha, rotulo, onConfirmar }: { linha: Linha; rot
 
 function FormularioEdicao({ linha, rotulo, onSubmit, children }: { linha: Linha; rotulo: string; onSubmit: () => void; children: ReactNode }) {
   const id = useId();
-  function enviar(event: FormEvent) { event.preventDefault(); onSubmit(); }
+  const validacao = useFormValidation("edicao-validacao");
+  function enviar(event: FormEvent) { event.preventDefault(); validacao.clear(); onSubmit(); }
   function teclado(event: KeyboardEvent) {
     if (event.key === "Escape" && !linha.ocupado) { event.stopPropagation(); linha.setModo("ver"); }
   }
-  return <form aria-labelledby={id} className="formulario-edicao" onSubmit={enviar} onKeyDown={teclado}>
+  return <form aria-labelledby={id} className={validacao.className("formulario-edicao")}
+    aria-describedby={validacao.message ? validacao.messageId : undefined}
+    onSubmit={enviar} onKeyDown={teclado} onInvalid={validacao.onInvalid} onInput={validacao.onInput}>
     <h4 id={id}>Editar {rotulo}</h4>
+    {validacao.message && <p id={validacao.messageId} className="mensagem-validacao" role="alert">{validacao.message}</p>}
     {linha.erro && <p className="mensagem-validacao" role="alert">{linha.erro}</p>}
     {children}
     <div className="acoes-linha">
