@@ -1,4 +1,5 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { LinhaAbastecimento, LinhaManutencao } from "./HistoricoOperacoes";
 import { ErroAbastecimento, listarAbastecimentos, listarVinculosAtivos,
   registrarAbastecimento, type Abastecimento, type Vinculo } from "./abastecimentos-api";
 import { ErroManutencao, listarManutencoes, listarVeiculosAtivos,
@@ -35,6 +36,8 @@ export function OperacoesApp({ token }: { token: string; perfil: string }) {
   const [erro, setErro] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [revisao, setRevisao] = useState(0);
+  const tituloAbastecimentos = useRef<HTMLHeadingElement>(null);
+  const tituloManutencoes = useRef<HTMLHeadingElement>(null);
   const validacaoAbastecimento = useFormValidation("abastecimento-validacao");
   const validacaoManutencao = useFormValidation("manutencao-validacao");
 
@@ -90,6 +93,25 @@ export function OperacoesApp({ token }: { token: string; perfil: string }) {
     } catch (error) { falha(error); } finally { setSalvando(false); }
   }
 
+  function abastecimentoAtualizado(item: Abastecimento) {
+    setHistorico((lista) => lista.map((atual) => (atual.id === item.id ? item : atual)));
+    setErro(""); setMensagem("Abastecimento atualizado.");
+  }
+  function abastecimentoExcluido(id: string) {
+    setHistorico((lista) => lista.filter((atual) => atual.id !== id));
+    setErro(""); setMensagem("Abastecimento excluído.");
+    tituloAbastecimentos.current?.focus();
+  }
+  function manutencaoAtualizada(item: Manutencao) {
+    setManutencoes((lista) => lista.map((atual) => (atual.id === item.id ? item : atual)));
+    setErro(""); setMensagem("Manutenção atualizada.");
+  }
+  function manutencaoExcluida(id: string) {
+    setManutencoes((lista) => lista.filter((atual) => atual.id !== id));
+    setErro(""); setMensagem("Manutenção excluída.");
+    tituloManutencoes.current?.focus();
+  }
+
   return <div className="mfe-area">
     <header className="mfe-cabecalho">
       <div>
@@ -140,7 +162,7 @@ export function OperacoesApp({ token }: { token: string; perfil: string }) {
         <button type="submit" disabled={carregando || salvando || veiculos.length === 0}>{salvando ? "Registrando…" : "Registrar manutenção"}</button>
       </form>
     </div>
-    <section className="historico-card" aria-labelledby="historico-abastecimentos"><h3 id="historico-abastecimentos">Histórico de abastecimentos</h3>{!carregando && historico.length === 0 && <p className="estado-vazio">Nenhum abastecimento registrado.</p>}<ul className="lista-operacoes">{historico.map((item) => <li key={item.id}><strong>{item.combustivel} · {item.litros.toFixed(2)} L</strong><span>{item.quilometragem.toLocaleString("pt-BR")} km</span><span>{item.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span><span>{new Date(item.realizadoEm).toLocaleString("pt-BR")}</span></li>)}</ul></section>
-    <section className="historico-card" aria-labelledby="historico-manutencoes"><h3 id="historico-manutencoes">Histórico de manutenções</h3>{!carregando && manutencoes.length === 0 && <p className="estado-vazio">Nenhuma manutenção registrada.</p>}<ul className="lista-operacoes">{manutencoes.map((item) => <li key={item.id}><strong>{item.tipo.replaceAll("_", " ")}</strong><span>{item.descricao}</span><span>{item.oficina}</span><span>{item.quilometragem.toLocaleString("pt-BR")} km</span><span>{item.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span><span>{new Date(`${item.realizadaEm}T12:00:00`).toLocaleDateString("pt-BR")}</span></li>)}</ul></section>
+    <section className="historico-card" aria-labelledby="historico-abastecimentos"><h3 id="historico-abastecimentos" ref={tituloAbastecimentos} tabIndex={-1}>Histórico de abastecimentos</h3>{!carregando && historico.length === 0 && <p className="estado-vazio">Nenhum abastecimento registrado.</p>}<ul className="lista-operacoes">{historico.map((item) => <LinhaAbastecimento key={item.id} token={token} item={item} vinculos={vinculos} veiculos={veiculos} onAtualizado={abastecimentoAtualizado} onExcluido={abastecimentoExcluido} />)}</ul></section>
+    <section className="historico-card" aria-labelledby="historico-manutencoes"><h3 id="historico-manutencoes" ref={tituloManutencoes} tabIndex={-1}>Histórico de manutenções</h3>{!carregando && manutencoes.length === 0 && <p className="estado-vazio">Nenhuma manutenção registrada.</p>}<ul className="lista-operacoes">{manutencoes.map((item) => <LinhaManutencao key={item.id} token={token} item={item} veiculos={veiculos} onAtualizado={manutencaoAtualizada} onExcluido={manutencaoExcluida} />)}</ul></section>
   </div>;
 }
