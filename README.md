@@ -37,6 +37,7 @@ flowchart LR
 - Gestão de usuários com perfis `ADMINISTRADOR` e `GESTOR_FROTA`, restrita a Administradores ativos (shell).
 - Cadastro de veículos, motoristas e vínculos motorista ↔ veículo (microfrontend Frota).
 - Registro de abastecimentos e manutenções (microfrontend Operações).
+- **Editar** e **Excluir** no histórico de Operações: edição na própria linha, com o formulário preenchido e validação acessível (no abastecimento, só combustível, litros, valor e quilometragem); exclusão com confirmação; foco gerenciado entre leitura, edição e confirmação.
 - Painel com gastos, situação da frota e próximas manutenções (microfrontend Painel).
 - Cartão **Visão consolidada**, alimentado por `GET /api/v1/aggregated-data`, com aviso quando `fontes` indica uma fonte indisponível.
 - Validação de formulários acessível nas telas de cadastro.
@@ -50,7 +51,7 @@ Cada domínio do produto é uma aplicação independente (fatia vertical), com b
 |---|---|---|---|
 | Shell | `frontend/` | 5173 | Login, menu, gestão de usuários, host dos microfrontends e página AsyncAPI |
 | Frota | `microfrontends/frota/` | 5174 | Veículos, motoristas e vínculos (`veiculos-api.ts`, `motoristas-api.ts`, `vinculos-api.ts`) |
-| Operações | `microfrontends/operacoes/` | 5175 | Abastecimentos e manutenções (`abastecimentos-api.ts`, `manutencoes-api.ts`) |
+| Operações | `microfrontends/operacoes/` | 5175 | Abastecimentos e manutenções, com edição e exclusão no histórico (`HistoricoOperacoes.tsx`, `abastecimentos-api.ts`, `manutencoes-api.ts`, `alteracao-api.ts`) |
 | Painel | `microfrontends/painel/` | 5176 | Painel e visão consolidada (`dashboard.ts`, `dados-agregados.ts`) |
 
 Cada microfrontend é gerado como módulo ES (`remoteEntry.js`) e carregado pelo shell em tempo de execução (`frontend/src/remotes.ts`).
@@ -66,7 +67,7 @@ A aplicação consome apenas a API pública exposta pelo BFF:
 | `GET`, `POST`, `PUT`, `DELETE` | `/api/v1/usuarios[/{id}]` | Gestão de usuários |
 | `GET`, `POST`, `PUT`, `DELETE` | `/api/v1/veiculos[/{id}]`, `/api/v1/motoristas[/{id}]` | Cadastros da frota |
 | `GET`, `POST`, `PUT` | `/api/v1/vinculos`, `/api/v1/vinculos/{id}/encerramento` | Vínculos |
-| `GET`, `POST` | `/api/v1/abastecimentos`, `/api/v1/manutencoes` | Operações |
+| `GET`, `POST`, `PUT`, `DELETE` | `/api/v1/abastecimentos[/{id}]`, `/api/v1/manutencoes[/{id}]` | Operações |
 | `GET` | `/api/v1/dashboard` | Painel |
 | `GET` | `/api/v1/aggregated-data` | Visão consolidada |
 
@@ -160,7 +161,7 @@ O acesso à aplicação exige uma conta.
 | Shell | `Login.test.tsx`, `App.test.tsx`, `Usuarios.test.tsx`, `MicrofrontendHost.test.tsx`, `vite-config.test.ts` | Login, navegação, usuários, carregamento dos microfrontends e proxy de desenvolvimento |
 | Shell | `scripts/docs-eventos.test.mjs` | Página AsyncAPI gerada no build |
 | Frota | `FrotaApp.test.tsx`, `Veiculos.test.tsx`, `Motoristas.test.tsx`, `Vinculos.test.tsx` | Telas e validação de cadastros |
-| Operações | `OperacoesApp.test.tsx` | Registro de abastecimentos e manutenções |
+| Operações | `OperacoesApp.test.tsx` | Registro, edição e exclusão de abastecimentos e manutenções |
 | Painel | `PainelApp.test.tsx`, `VisaoConsolidada.test.tsx`, `style.test.mjs` | Painel e avisos de retorno parcial |
 
 Testes de componente com Vitest + Testing Library em jsdom:
