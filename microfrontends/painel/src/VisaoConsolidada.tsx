@@ -1,6 +1,6 @@
 import type { DadosAgregados } from "./dados-agregados";
+import { moeda } from "./formatos";
 
-const moeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const decimal = new Intl.NumberFormat("pt-BR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,

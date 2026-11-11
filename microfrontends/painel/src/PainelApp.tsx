@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { consultarDadosAgregados } from "./dados-agregados";
 import { consultarDashboard, type Dashboard } from "./dashboard";
 import { VisaoConsolidada, type EstadoConsolidada } from "./VisaoConsolidada";
-
-const moeda = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+import { moeda } from "./formatos";
 
 const data = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" });
 
