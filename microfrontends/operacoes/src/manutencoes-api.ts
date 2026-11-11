@@ -1,6 +1,8 @@
+import { cabecalhos, mensagemDeFalha } from "./alteracao-api";
 export type Veiculo = { id: string; placa: string; modelo: string; status: string };
-export type Manutencao = { id: string; veiculoId: string; tipo: string; realizadaEm: string; quilometragem: number; descricao: string; oficina: string; valor: number; proximaManutencao: string | null; criadoEm: string };
-export type NovaManutencao = Omit<Manutencao, "id" | "criadoEm">;
+export type Manutencao = { id: string; veiculoId: string; tipo: string; realizadaEm: string; quilometragem: number; descricao: string; oficina: string; valor: number; proximaManutencao: string | null; criadoEm: string; versao?: number };
+export type NovaManutencao = Omit<Manutencao, "id" | "criadoEm" | "versao">;
+export type AtualizacaoManutencao = Omit<NovaManutencao, "veiculoId">;
 export class ErroManutencao extends Error {}
 
 async function resposta<T>(response: Response): Promise<T> {
@@ -37,3 +39,18 @@ export async function registrarManutencao(token: string, entrada: NovaManutencao
 }
 import { apiUrl } from "./api-url";
 
+
+export async function atualizarManutencao(token: string, id: string, entrada: AtualizacaoManutencao) {
+  const response = await fetch(apiUrl(`/api/v1/manutencoes/${id}`), {
+    method: "PUT", headers: cabecalhos(token), body: JSON.stringify(entrada),
+  });
+  if (!response.ok) throw new ErroManutencao(await mensagemDeFalha(response, "Não foi possível salvar a manutenção."));
+  return response.json() as Promise<Manutencao>;
+}
+
+export async function excluirManutencao(token: string, id: string) {
+  const response = await fetch(apiUrl(`/api/v1/manutencoes/${id}`), {
+    method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new ErroManutencao(await mensagemDeFalha(response, "Não foi possível excluir a manutenção."));
+}
