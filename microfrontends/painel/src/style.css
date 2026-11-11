@@ -197,6 +197,8 @@
 }
 
 .painel-tabela-rolagem {
+  /* Contém o .visualmente-oculto (absolute) das células: sem isso ele alarga a página. */
+  position: relative;
   max-width: 100%;
   overflow-x: auto;
   border: 1px solid #e2e8f0;
