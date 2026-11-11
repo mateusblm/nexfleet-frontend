@@ -153,3 +153,21 @@ it("avisa que o cálculo de eficiência falhou e mantém os veículos na tabela"
   expect(within(linhaDa(tabela, "ABC1D23")).getAllByText("indisponível")).toHaveLength(3);
   expect(screen.getByText("R$ 880,00")).toBeInTheDocument();
 });
+
+it("explica que a frota está vazia em vez de mostrar uma tabela sem linhas", async () => {
+  stubApi(() =>
+    Promise.resolve(
+      respostaJson({
+        ...agregadoCompleto,
+        frota: { veiculos: [], motoristas: [], vinculosAtivos: [] },
+        eficiencia: { veiculos: [], frota: null },
+      }),
+    ),
+  );
+
+  render(<PainelApp token="token" perfil="GESTOR_FROTA" />);
+
+  const secao = await screen.findByRole("region", { name: "Visão consolidada" });
+  expect(await within(secao).findByText(/Nenhum veículo cadastrado/)).toBeInTheDocument();
+  expect(within(secao).queryByRole("table")).not.toBeInTheDocument();
+});
