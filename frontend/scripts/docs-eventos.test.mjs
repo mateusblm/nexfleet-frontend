@@ -19,3 +19,14 @@ it("renderiza o contrato com o web component oficial em versão fixa", () => {
   expect(pagina).toMatch(/@asyncapi\/web-component@\d+\.\d+\.\d+\//);
   expect(pagina).toContain('schemaUrl="./eventos.asyncapi.yaml"');
 });
+
+it("não carrega nada de fora do site: scripts e CSS vêm de ./vendor/ com versão fixa", () => {
+  const pagina = readFileSync(resolve(pasta, "index.html"), "utf8");
+  expect(pagina).not.toMatch(/https?:\/\//);
+  expect(pagina).toContain(
+    'src="./vendor/@asyncapi/web-component@3.1.8/lib/asyncapi-web-component.js"',
+  );
+  expect(pagina).toContain(
+    'cssImportPath="./vendor/@asyncapi/react-component@3.1.8/styles/default.min.css"',
+  );
+});
