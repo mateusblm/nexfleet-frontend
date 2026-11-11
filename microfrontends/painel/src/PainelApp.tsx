@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { consultarDadosAgregados } from "./dados-agregados";
 import { consultarDashboard, type Dashboard } from "./dashboard";
+import { VisaoConsolidada, type EstadoConsolidada } from "./VisaoConsolidada";
 
 const moeda = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -12,17 +14,31 @@ export function PainelApp({ token }: { token: string; perfil: string }) {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
+  const [consolidada, setConsolidada] = useState<EstadoConsolidada>({ tipo: "carregando" });
 
+  // Os dois pedidos correm em paralelo e falham de forma independente:
+  // a visão consolidada nunca derruba os indicadores, nem o contrário.
   async function carregar() {
     setCarregando(true);
     setErro("");
+    const pedidoDashboard = consultarDashboard(token);
+    void carregarConsolidada();
     try {
-      setDashboard(await consultarDashboard(token));
+      setDashboard(await pedidoDashboard);
     } catch {
       setDashboard(null);
       setErro("Não foi possível carregar os indicadores. Tente novamente.");
     } finally {
       setCarregando(false);
+    }
+  }
+
+  async function carregarConsolidada() {
+    setConsolidada({ tipo: "carregando" });
+    try {
+      setConsolidada({ tipo: "pronto", dados: await consultarDadosAgregados(token) });
+    } catch {
+      setConsolidada({ tipo: "erro" });
     }
   }
 
@@ -104,6 +120,8 @@ export function PainelApp({ token }: { token: string; perfil: string }) {
           </section>
         </>
       )}
+
+      <VisaoConsolidada estado={consolidada} onTentarNovamente={() => void carregarConsolidada()} />
     </div>
   );
 }
