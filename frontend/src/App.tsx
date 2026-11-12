@@ -22,7 +22,7 @@ export function App() {
       setAmbiente(await consultarAmbiente());
     } catch {
       setErro(
-        "Não foi possível consultar o ambiente. Confira o Docker e o Gateway na porta 8080 e tente novamente.",
+        "Não foi possível verificar os serviços agora. Tente novamente em instantes.",
       );
     } finally {
       setCarregando(false);
@@ -37,7 +37,6 @@ export function App() {
             <span className="marca-simbolo" aria-hidden="true">N</span>
             <span>Nex<span>Fleet</span></span>
           </a>
-          <span className="versao-badge">Sprint 4 · Qualidade</span>
         </header>
 
         <section className="hero" id="inicio" aria-labelledby="hero-titulo">
@@ -63,7 +62,7 @@ export function App() {
           >
             <div className="ambiente-card-cabecalho">
               <div>
-                <span className="eyebrow">Diagnóstico local</span>
+                <span className="eyebrow">Disponibilidade</span>
                 <h2 id="ambiente-titulo">Status do ambiente</h2>
               </div>
               <span
@@ -103,7 +102,7 @@ export function App() {
       <Login />
       <footer className="landing-footer">
         <span>NexFleet · Gestão de frotas</span>
-        <span>Acesso seguro via Gateway e BFF</span>
+        <span>Acesso protegido e criptografado</span>
       </footer>
     </div>
   );

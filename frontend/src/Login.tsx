@@ -254,7 +254,7 @@ export function Login() {
           <span className="usuario-avatar" aria-hidden="true">{sessao.perfil === "ADMINISTRADOR" ? "AD" : "GF"}</span>
           <div className="usuario-dados">
             <strong>{sessao.perfil === "ADMINISTRADOR" ? "Administrador" : "Gestor de frota"}</strong>
-            <span>Ambiente local</span>
+            <span>Transportadora Atlântico</span>
           </div>
         </div>
       </aside>
